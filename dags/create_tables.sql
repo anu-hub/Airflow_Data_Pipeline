@@ -16,9 +16,9 @@ CREATE TABLE public.artists (
 );
 
 CREATE TABLE public.songplays (
-	playid varchar(32) NOT NULL,
+	playid Integer IDENTITY NOT NULL,
 	start_time timestamp NOT NULL,
-	userid int4 NOT NULL,
+	userid int4,
 	"level" varchar(256),
 	songid varchar(256),
 	artistid varchar(256),
