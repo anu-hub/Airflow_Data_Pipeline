@@ -17,7 +17,7 @@ class DataQualityOperator(BaseOperator):
         self.redshift_conn_id = redshift_conn_id
 
     def execute(self, context):
-        songplay_check = (""" SELECT count(1) from songplays where songid IS NULL or artistid IS NULL;""")
+        songplay_check = (""" SELECT count(1) from songplays where start_time IS NULL;""")
         users_check = (""" SELECT count(1) from users where userid IS NULL;""")
         songs_check = (""" SELECT count(1) from songs where songid IS NULL or artistid IS NULL;""")
         artists_check = (""" SELECT count(1) from artists where artistid IS NULL;""")
@@ -29,8 +29,11 @@ class DataQualityOperator(BaseOperator):
         
         
         for check in data_quality_checks:
-            records = redshift_hook.get_records(check)
-            if len(records) > 0 and len(records[0]) > 0:
-                raise ValueError(f"Data quality check failed. {check}")
+            records = redshift_hook.get_records(check)[0]
+            logging.info(f"Record Count. {records[0]}")
+            if records[0] != 0:
+                logging.info(f"Record Count. {records[0]}")    
+                raise ValueError(f"Data quality check failed.{check}")
             else:
                 logging.info(f"Data quality check completed. {check}")
+                logging.info(f"Record Count. {records[0]}")
