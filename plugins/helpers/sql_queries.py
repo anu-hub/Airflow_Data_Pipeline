@@ -1,8 +1,9 @@
 class SqlQueries:
-    songplay_table_insert = ("""INSERT INTO songplays (playid,start_time,userid,level,songid,artistid,sessionid,location,user_agent)
-        SELECT
-                md5(events.sessionid || events.start_time) songplay_id,
-                events.start_time, 
+    
+    # Removed md5(events.sessionid || events.start_time) songplay_id: added in Create Table "playid Integer IDENTITY NOT NULL"
+    # userid is NULL in staging_events modofied the insert query
+    songplay_table_insert = ("""INSERT INTO songplays (start_time,userid,level,songid,artistid,sessionid,location,user_agent)
+        SELECT  events.start_time, 
                 events.userid, 
                 events.level, 
                 songs.song_id, 
@@ -17,7 +18,7 @@ class SqlQueries:
             ON events.song = songs.title
                 AND events.artist = songs.artist_name
                 AND events.length = songs.duration
-            WHERE songs.artist_id is not NULL AND songs.song_id is not NULL and events.userid is not NULL
+            WHERE songs.artist_id is not NULL AND songs.song_id is not NULL and events.start_time is not NULL
     """)
 
     user_table_insert = ("""INSERT INTO users (userid,first_name,last_name,gender,level)
